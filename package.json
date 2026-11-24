@@ -27,7 +27,7 @@
     "fflate": "^0.8.2",
     "lucide-react": "^0.468.0",
     "mobx-react": "9.2.1",
-    "monaco-editor": "0.56.0",
+    "monaco-editor": "0.57.0",
     "monaco-yaml": "5.5.1",
     "react": "19.2.4",
     "react-dom": "19.2.4"
