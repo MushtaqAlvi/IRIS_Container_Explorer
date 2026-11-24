@@ -1,0 +1,16 @@
+import type { Inventory } from './model'
+
+const download = (blob: Blob, name: string) => { const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = name; link.click(); URL.revokeObjectURL(url) }
+const dateName = (name: string) => name.replace(/\.[^.]+$/, '').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase()
+const rows = <T extends object>(data: T[]) => data.map(row => Object.fromEntries(Object.entries(row).map(([key, value]) => [key, Array.isArray(value) ? value.join(' | ') : typeof value === 'object' && value !== null ? JSON.stringify(value) : value ?? ''])))
+export function exportJson(inventory: Inventory) { download(new Blob([JSON.stringify(inventory, null, 2)], { type: 'application/json' }), `${dateName(inventory.container.name)}-inventory.json`) }
+export async function exportExcel(inventory: Inventory) {
+  const { default: ExcelJS } = await import('exceljs')
+  const book = new ExcelJS.Workbook(); book.creator = 'IRIS Container Explorer'; book.created = new Date()
+  const add = (name: string, data: object[]) => { const sheet = book.addWorksheet(name); const result = rows(data); const headers = [...new Set(result.flatMap(row => Object.keys(row)))]; sheet.addRow(headers); result.forEach(row => sheet.addRow(headers.map(header => row[header] ?? ''))); sheet.views = [{ state: 'frozen', ySplit: 1 }]; sheet.autoFilter = { from: 'A1', to: `${String.fromCharCode(64 + Math.min(headers.length, 26))}${Math.max(1, result.length + 1)}` }; sheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } }; sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF3525CD' } }; headers.forEach((header, index) => { sheet.getColumn(index + 1).width = Math.min(Math.max(header.length + 2, 14), 45) }) }
+  add('Summary', [
+    { Metric: 'Container', Value: inventory.container.name }, { Metric: 'Scanned at', Value: inventory.container.scannedAt }, { Metric: 'JARs', Value: inventory.jars.length }, { Metric: 'XML files', Value: inventory.xmlFiles.length }, { Metric: 'Services', Value: inventory.services.length }, { Metric: 'Routes', Value: inventory.routes.length }, { Metric: 'Targets', Value: inventory.routeProperties.filter(x => x.name.toLowerCase() === 'target').length }, { Metric: 'Beans', Value: inventory.beanDefinitions.length }, { Metric: 'Issues', Value: inventory.issues.length },
+  ])
+  add('JARs', inventory.jars); add('XML Files', inventory.xmlFiles.map(({ raw, ...item }) => item)); add('Services', inventory.services); add('REST Endpoints', inventory.restEndpoints); add('REST Parameters', inventory.restParameters); add('Routes', inventory.routes); add('Route Properties', inventory.routeProperties); add('Route Steps', inventory.routeSteps); add('Processors', inventory.processors); add('Bean Definitions', inventory.beanDefinitions); add('Bean References', inventory.beanReferences); add('Dependencies', inventory.dependencies); add('Validation Issues', inventory.issues); add('Errors', inventory.errors)
+  download(new Blob([await book.xlsx.writeBuffer()], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), `${dateName(inventory.container.name)}-inventory.xlsx`)
+}
