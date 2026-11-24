@@ -2,6 +2,14 @@
 
 IRIS Explorer is a privacy-first, browser-only workbench for inspecting JAR, WAR, and ZIP archives that contain Apache Camel and Spring XML. Open an archive locally to discover embedded JARs, Camel services, REST endpoints, route details, and source XML—without uploading the archive to a server.
 
+## Try it online
+
+Use IRIS Explorer directly in your browser: [mushtaqalvi.github.io/IRIS_Container_Explorer](https://mushtaqalvi.github.io/IRIS_Container_Explorer)
+
+## Analyze APIs without deploying
+
+IRIS Explorer helps developers statically inspect existing API and integration functionality before deployment. Open an application archive to find REST endpoints, Camel routes, service configuration, and source XML locally—without starting JBoss or another application server. It analyzes the archive; it does not run application code.
+
 ## Highlights
 
 - Opens local `.jar`, `.war`, and `.zip` files through the browser file picker or drag and drop.
@@ -66,17 +74,6 @@ npm run preview
 ```
 
 `package.json` remains `private: true` deliberately: this project is open source on GitHub but is not intended to be published to npm.
-
-## Deploy to GitHub Pages
-
-The included GitHub Actions workflow deploys `main` automatically.
-
-1. Create a GitHub repository and push this project, including the `.github` directory.
-2. In **Settings → Pages**, select **GitHub Actions** as the build and deployment source.
-3. Push to `main` or run the **Deploy GitHub Pages** workflow manually.
-4. GitHub will publish the generated site at the Pages URL shown in the workflow summary.
-
-The workflow supplies the repository subpath to Vite, so static assets—including the local Camel catalog—work on project Pages URLs such as `https://owner.github.io/repository/`. For a custom domain, set `VITE_BASE_PATH: /` in the deployment workflow.
 
 ## Project layout
 
