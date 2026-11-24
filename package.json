@@ -20,7 +20,7 @@
     "@patternfly/react-core": "6.5.1",
     "@patternfly/react-drag-drop": "6.5.1",
     "@patternfly/react-icons": "6.5.1",
-    "@patternfly/react-table": "6.5.1",
+    "@patternfly/react-table": "6.7.0",
     "@patternfly/react-topology": "6.5.0",
     "@xmldom/xmldom": "^0.9.12",
     "exceljs": "^4.4.0",
